@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>15-Question Questionnaire</title>
   <style>
     body {
@@ -21,9 +22,10 @@
     }
 
     .question-text {
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
+  font-size: 18px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
 
     .options-row {
       display: flex;
@@ -117,6 +119,24 @@
         width: 100%;
       }
     }
+    @media (max-width: 600px) {
+  .question-text {
+    font-size: 20px; /* larger on small screens */
+    text-align: center;
+  }
+
+  .radio-buttons {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .radio-group {
+    min-width: 32px;
+    flex-shrink: 0; /* prevents wrapping */
+  }
+}
   </style>
 </head>
 <body>
