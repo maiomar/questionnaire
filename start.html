@@ -1,1 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>15-Question Questionnaire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      max-width: 700px;
+      background: #fff;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .question-text {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .options-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .label {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .radio-buttons {
+      display: flex;
+      gap: 10px;
+      flex-grow: 1;
+      justify-content: space-between;
+      overflow-x: auto;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 30px;
+    }
+
+    .radio-group label {
+      font-size: 12px;
+    }
+
+    .radio-group input[type="radio"] {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid green;
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .radio-group input[type="radio"]:checked::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 8px;
+      height: 8px;
+      background: green;
+      border-radius: 50%;
+    }
+
+    .next-button {
+      margin-top: 30px;
+      padding: 12px;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .next-button:hover {
+      background-color: #0b8f0b;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: green;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .options-row {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .radio-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .next-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card" id="questionCard">
+  <div class="question-text" id="questionText">Loading...</div>
+  <div class="options-row">
+    <span class="label">Rarely</span>
+    <div class="radio-buttons" id="radioButtons"></div>
+    <span class="label">Always</span>
+  </div>
+  <button class="next-button" onclick="nextQuestion()">Next</button>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  const questions = [
+    "I feel confident in my daily tasks.",
+    "I stay calm under pressure.",
+    "I enjoy working in teams.",
+    "I take initiative at work.",
+    "I adapt well to change.",
+    "I manage time efficiently.",
+    "I feel satisfied with my performance.",
+    "I communicate clearly with others.",
+    "I seek feedback and learn from it.",
+    "I solve problems effectively.",
+    "I stay motivated throughout the day.",
+    "I support my colleagues.",
+    "I follow through on commitments.",
+    "I am organized in my responsibilities.",
+    "I feel positive about my future."
+  ];
+
+  let currentIndex = 0;
+  const answers = new Array(questions.length).fill(null);
+
+  function renderQuestion() {
+    const questionText = document.getElementById('questionText');
+    const radioButtons = document.getElementById('radioButtons');
+    const result = document.getElementById('result');
+    result.innerText = ''; // clear result
+
+    questionText.innerText = `Q${currentIndex + 1}: ${questions[currentIndex]}`;
+    radioButtons.innerHTML = '';
+
+    for (let i = 1; i <= 10; i++) {
+      const group = document.createElement('div');
+      group.className = 'radio-group';
+
+      const label = document.createElement('label');
+      label.innerText = i;
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'question';
+      input.value = i;
+      if (answers[currentIndex] === i) input.checked = true;
+
+      group.appendChild(label);
+      group.appendChild(input);
+      radioButtons.appendChild(group);
+    }
+  }
+
+  function nextQuestion() {
+    const selected = document.querySelector('input[name="question"]:checked');
+    if (!selected) {
+      alert("Please select an answer before continuing.");
+      return;
+    }
+
+    answers[currentIndex] = parseInt(selected.value);
+
+    currentIndex++;
+
+    if (currentIndex < questions.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult() {
+  const totalScore = answers.reduce((sum, val) => sum + (val || 0), 0);
+  const maxScore = questions.length * 10;
+
+  let message = "";
+  if (totalScore >= 61) {
+    message = "High Leadership Strength – You possess strong leadership skills that positively influence others.";
+  } else if (totalScore >= 46) {
+    message = "Moderate Leadership Strength – You have good skills but there is room to develop some areas to increase your impact.";
+  } else {
+    message = "Low Leadership Strength – There is significant opportunity to grow in leadership skills and influence.";
+  }
+
+  document.getElementById('questionText').innerText = "Thank you!";
+  document.getElementById('radioButtons').innerHTML = '';
+  document.querySelector('.label:first-of-type').style.display = 'none';
+  document.querySelector('.label:last-of-type').style.display = 'none';
+  document.querySelector('.next-button').style.display = 'none';
+
+  document.getElementById('result').innerHTML = `
+    Your total score is <strong>${totalScore}</strong> out of ${maxScore}.<br>
+    <div style="margin-top:10px; font-size:16px;">${message}</div>
+  `;
+}
+
+
+  // Initial render
+  renderQuestion();
+</script>
+
+</body>
+</html>
 
